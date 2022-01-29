@@ -122,6 +122,26 @@ def _select_weather_display_params(weather_id):
         display_params = ("🌈", style.RESET)
     return display_params
 
+def _relative_temp_color(temperature: float, feels_like: float):
+    """
+    Returns red if feels_like is hotter than the current temperature and
+    blue if feels_like is colder than the current temperature
+
+    Args:
+       temperature (float): The current measured temperature.
+       feels_like (float): The current feels_like temperature factoring in
+          humidity, wind chill, etc.
+    
+    Returns:
+       color: color of relative difference between temperature and feels_like
+    """
+    color = style.RESET
+    if feels_like > temperature:
+        color = style.RED
+    elif feels_like < temperature:
+        color = style.BLUE
+    return color
+
 def display_weather_info(weather_data: dict, centigrade: bool=False):
     """
     Prints formatted weather information about a city.
@@ -136,6 +156,7 @@ def display_weather_info(weather_data: dict, centigrade: bool=False):
     weather_id = weather_data['weather'][0]['id']
     weather_description = weather_data['weather'][0]['description']
     temperature = weather_data['main']['temp']
+    feels_like = weather_data['main']['feels_like']
 
     style.change_color(style.REVERSE)
     print(f"{city:^{style.PADDING}}", end="")
@@ -148,7 +169,14 @@ def display_weather_info(weather_data: dict, centigrade: bool=False):
     print(f"\t{weather_description.capitalize():^{style.PADDING}}", end=" ")
     style.change_color(style.RESET)
 
-    print(f"({temperature}°{'C' if centigrade else 'F'})")
+    print(f"(Currently {temperature}°{'C' if centigrade else 'F'}", end=" ")
+
+    rel_color = _relative_temp_color(temperature, feels_like)
+
+    style.change_color(rel_color)
+    print(f", feels like {feels_like}°{'C' if centigrade else 'F'}", end="")
+    style.change_color(style.RESET)
+    print(")")
 
 if __name__ == '__main__':
     user_args = read_user_cli_args()
