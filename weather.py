@@ -169,12 +169,12 @@ def display_weather_info(weather_data: dict, centigrade: bool=False):
     print(f"\t{weather_description.capitalize():^{style.PADDING}}", end=" ")
     style.change_color(style.RESET)
 
-    print(f"(Currently {temperature}°{'C' if centigrade else 'F'}", end=" ")
+    print(f"(Currently {temperature}°{'C' if centigrade else 'F'},", end="")
 
     rel_color = _relative_temp_color(temperature, feels_like)
 
     style.change_color(rel_color)
-    print(f", feels like {feels_like}°{'C' if centigrade else 'F'}", end="")
+    print(f" feels like {feels_like}°{'C' if centigrade else 'F'}", end="")
     style.change_color(style.RESET)
     print(")")
 
